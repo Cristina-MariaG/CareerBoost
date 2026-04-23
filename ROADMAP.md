@@ -3,7 +3,7 @@
 ## Ordre des branches
 
 ```
-chore/project-init          ✅ en cours
+chore/project-init          ✅ terminé
 feat/claude-client
 feat/linkedin-agent-api
 feat/linkedin-agent-ui
@@ -16,7 +16,7 @@ chore/docker-prod
 ---
 
 ## Milestone 1 — Foundation
-> Done quand : `docker-compose up` démarre backend + frontend, les deux services communiquent.
+> Done quand : `docker compose up` démarre backend + frontend, les deux services communiquent.
 
 | # | Tâche | Branche |
 |---|-------|---------|
@@ -82,7 +82,7 @@ chore/docker-prod
 ---
 
 ## Milestone 6 — Production Ready
-> Done quand : `docker-compose up` en prod, les deux agents fonctionnent.
+> Done quand : `docker compose up` en prod, les deux agents fonctionnent.
 
 | # | Tâche | Branche |
 |---|-------|---------|

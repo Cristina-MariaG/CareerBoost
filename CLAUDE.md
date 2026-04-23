@@ -88,7 +88,7 @@ Voir `.env.example`. Variables critiques :
 |----------|-------|
 | `ANTHROPIC_API_KEY` | Clé API Anthropic |
 | `DJANGO_SECRET_KEY` | Secret Django |
-| `DATABASE_URL` | Connection string PostgreSQL |
+| `POSTGRES_DB` / `POSTGRES_USER` / `POSTGRES_PASSWORD` | Credentials PostgreSQL |
 | `CORS_ALLOWED_ORIGINS` | Ex: `http://localhost:5173` |
 | `BACKEND_URL` | Cible du proxy Vite (docker: `http://backend:8000`) |
 
