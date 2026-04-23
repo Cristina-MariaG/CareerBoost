@@ -20,7 +20,7 @@ CareerBoost — Django REST Framework backend + Vue.js 3 frontend with two Claud
 
 ```bash
 # Lancer tout l'environnement
-docker-compose up
+docker compose up
 
 # Backend seul (depuis backend/)
 python manage.py migrate
