@@ -10,7 +10,7 @@ CareerBoost — Django REST Framework backend + Vue.js 3 frontend with two Claud
 
 ## Stack
 
-- Python 3.11 / Django 5 / Django REST Framework
+- Python 3.13 / Django 5 / Django REST Framework
 - Anthropic SDK — modèle **`claude-sonnet-4-6`** (pas `claude-sonnet-4-20250514` qui est invalide)
 - Vue.js 3 + Vite + Vue Router + Axios
 - PostgreSQL (dev + prod via docker-compose)
