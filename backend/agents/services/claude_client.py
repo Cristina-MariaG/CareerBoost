@@ -17,6 +17,7 @@ def stream(system_prompt: str, user_message: str, cache_system: bool = False):
     system = _build_system(system_prompt, cache_system)
 
     try:
+        yielded = False
         with client.messages.stream(
             model="claude-sonnet-4-6",
             max_tokens=2048,
@@ -24,7 +25,11 @@ def stream(system_prompt: str, user_message: str, cache_system: bool = False):
             messages=[{"role": "user", "content": user_message}],
         ) as stream:
             for text in stream.text_stream:
+                yielded = True
                 yield text
+
+        if not yielded:
+            raise ClaudeError("Claude a retourné une réponse vide.")
 
     except anthropic.AuthenticationError:
         raise ClaudeError("Clé API Anthropic invalide.")
