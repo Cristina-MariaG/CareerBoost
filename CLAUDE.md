@@ -49,33 +49,39 @@ backend/
 │   │   └── cv_agent.py         # prompt engineering CV + parsing PDF
 │   ├── tests/
 │   │   ├── test_claude_client.py   # 7 tests : streaming, erreurs, caching
-│   │   └── test_linkedin_agent.py  # 7 tests : endpoint SSE, serializer, historique
+│   │   ├── test_linkedin_agent.py  # 7 tests : endpoint SSE, serializer, historique
+│   │   └── test_cv_agent.py        # 10 tests : extraction PDF, endpoint SSE, validations
 │   ├── models.py       # Session (UUID anonyme), GenerationHistory
-│   ├── serializers.py  # LinkedInRequestSerializer (validation description, ton, session_id)
+│   ├── serializers.py  # LinkedInRequestSerializer + CvRequestSerializer
 │   ├── views.py        # endpoints DRF + StreamingHttpResponse (SSE)
-│   └── urls.py         # GET /api/health/, POST /api/agents/linkedin/
+│   └── urls.py         # GET /api/health/, POST /api/agents/linkedin/, POST /api/agents/cv/
 frontend/
 ├── src/
-│   ├── services/api.js          # Axios (JSON) + streamLinkedIn() (fetch SSE) + getSessionId()
+│   ├── services/api.js          # Axios (JSON) + streamLinkedIn() + streamCv() (fetch SSE) + getSessionId()
 │   ├── router/index.js          # routes /linkedin et /cv
 │   ├── views/
 │   │   ├── LinkedinView.vue     # formulaire description + sélecteur 3 tons + état streaming
-│   │   └── CvView.vue           # à venir (feat/cv-agent-ui)
+│   │   └── CvView.vue           # formulaire offre + upload CV/LM PDF + état streaming
 │   └── components/
 │       ├── PostResult.vue       # rendu Markdown streamé + bouton copier + curseur clignotant
-│       ├── FileUpload.vue       # à venir (feat/cv-agent-ui)
-│       └── ResultCard.vue       # à venir (feat/cv-agent-ui)
+│       ├── FileUpload.vue       # drag & drop PDF + feedback erreur
+│       └── ResultCard.vue       # affichage CV + LM côte à côte, Markdown streamé
 ```
 
 ### Flux de données
 
 ```
-Vue (EventSource) → POST /api/agents/linkedin/ ou /api/agents/cv/
-  → LinkedInRequestSerializer (validation)
+Vue (fetch) → POST /api/agents/linkedin/  (JSON)
+           → POST /api/agents/cv/          (multipart/form-data : offre + CV PDF + LM PDF optionnel)
+  → Serializer (validation)
   → DRF view → agent service → claude_client.py (streaming)
   → StreamingHttpResponse (SSE) → Vue affiche token par token
   → GenerationHistory sauvegardé en base après le stream
 ```
+
+**Agent CV — format de sortie** :
+- Avec LM : `## CV adapté\n...\n## Lettre de motivation adaptée\n...`
+- Sans LM : `## CV adapté\n...`
 
 ### Endpoints disponibles
 
@@ -95,7 +101,9 @@ Vue (EventSource) → POST /api/agents/linkedin/ ou /api/agents/cv/
 
 **Format de sortie** — Markdown. Claude retourne du Markdown, le frontend le rend.
 
-**PDF** — supprimés immédiatement après extraction du texte (RGPD + espace). Ne pas persister les fichiers uploadés.
+**PDF** — lus en mémoire (`file.read()` → `BytesIO`), jamais écrits sur disque. Ne pas persister les fichiers uploadés (RGPD). Validation : extension `.pdf` + taille max 5 Mo dans `CvRequestSerializer`.
+
+**Adminer** — interface DB disponible sur `http://localhost:8080` (service Docker). Connexion : système PostgreSQL, serveur `db`, user/password/db = `careerboost`.
 
 **Base de données** — PostgreSQL dès le dev (pas de SQLite). Credentials dans `.env`.
 
