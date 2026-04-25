@@ -39,6 +39,13 @@ services:
     depends_on:
       - backend
 
+  adminer:
+    image: adminer
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
 volumes:
   postgres_data:
   media_data:

@@ -23,14 +23,14 @@ class LinkedInAgentTest(TestCase):
             content_type="application/json",
         )
 
-    @patch("agents.views.generate")
+    @patch("agents.views.linkedin_agent_generate")
     def test_returns_sse_stream(self, mock_generate):
         mock_generate.return_value = iter(["Bonjour", " LinkedIn"])
         response = self._post(self.valid_payload)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], "text/event-stream")
 
-    @patch("agents.views.generate")
+    @patch("agents.views.linkedin_agent_generate")
     def test_stream_contains_tokens(self, mock_generate):
         mock_generate.return_value = iter(["Hello", " world"])
         response = self._post(self.valid_payload)
@@ -39,7 +39,7 @@ class LinkedInAgentTest(TestCase):
         self.assertIn('"text": " world"', content)
         self.assertIn("[DONE]", content)
 
-    @patch("agents.views.generate")
+    @patch("agents.views.linkedin_agent_generate")
     def test_saves_history_after_stream(self, mock_generate):
         mock_generate.return_value = iter(["Super post"])
         response = self._post(self.valid_payload)
@@ -49,7 +49,7 @@ class LinkedInAgentTest(TestCase):
         self.assertEqual(entry.agent, "linkedin")
         self.assertEqual(entry.output, "Super post")
 
-    @patch("agents.views.generate")
+    @patch("agents.views.linkedin_agent_generate")
     def test_creates_session_if_not_exists(self, mock_generate):
         mock_generate.return_value = iter(["ok"])
         self._post(self.valid_payload)
