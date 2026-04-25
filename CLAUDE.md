@@ -83,6 +83,7 @@ Vue (EventSource) → POST /api/agents/linkedin/ ou /api/agents/cv/
 |---------|-----|-------------|
 | GET | `/api/health/` | Healthcheck backend |
 | POST | `/api/agents/linkedin/` | Génère un post LinkedIn (SSE) |
+| POST | `/api/agents/cv/` | Adapte CV + LM à une offre (SSE, multipart/form-data) |
 
 ## Décisions clés
 
