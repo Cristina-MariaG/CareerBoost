@@ -45,11 +45,15 @@ backend/
 ├── agents/          # app principale
 │   ├── services/
 │   │   ├── claude_client.py    # wrapper SDK Anthropic (shared par les 2 agents)
-│   │   ├── linkedin_agent.py   # prompt engineering LinkedIn
+│   │   ├── linkedin_agent.py   # prompt engineering LinkedIn (3 tons)
 │   │   └── cv_agent.py         # prompt engineering CV + parsing PDF
-│   ├── models.py    # Session (UUID anonyme), GenerationHistory
-│   ├── views.py     # endpoints DRF + StreamingHttpResponse (SSE)
-│   └── urls.py
+│   ├── tests/
+│   │   ├── test_claude_client.py   # 7 tests : streaming, erreurs, caching
+│   │   └── test_linkedin_agent.py  # 7 tests : endpoint SSE, serializer, historique
+│   ├── models.py       # Session (UUID anonyme), GenerationHistory
+│   ├── serializers.py  # LinkedInRequestSerializer (validation description, ton, session_id)
+│   ├── views.py        # endpoints DRF + StreamingHttpResponse (SSE)
+│   └── urls.py         # GET /api/health/, POST /api/agents/linkedin/
 frontend/
 ├── src/
 │   ├── services/api.js          # instance Axios, baseURL=/api
@@ -62,9 +66,18 @@ frontend/
 
 ```
 Vue (EventSource) → POST /api/agents/linkedin/ ou /api/agents/cv/
+  → LinkedInRequestSerializer (validation)
   → DRF view → agent service → claude_client.py (streaming)
   → StreamingHttpResponse (SSE) → Vue affiche token par token
+  → GenerationHistory sauvegardé en base après le stream
 ```
+
+### Endpoints disponibles
+
+| Méthode | URL | Description |
+|---------|-----|-------------|
+| GET | `/api/health/` | Healthcheck backend |
+| POST | `/api/agents/linkedin/` | Génère un post LinkedIn (SSE) |
 
 ## Décisions clés
 
