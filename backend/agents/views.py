@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from .models import Session, GenerationHistory
-from .serializers import LinkedInRequestSerializer, CvRequestSerializer
+from .serializers import LinkedInRequestSerializer, CvRequestSerializer, GenerationHistorySerializer
 from .services.linkedin_agent import generate as linkedin_agent_generate
 from .services.cv_agent import generate as cv_agent_generate, extract_text_from_pdf
 from .services.claude_client import ClaudeError
@@ -13,6 +13,20 @@ from .services.claude_client import ClaudeError
 @api_view(['GET'])
 def health_check(request):
     return Response({'status': 'ok'})
+
+
+@api_view(['GET'])
+def history(request):
+    session_id = request.query_params.get('session_id')
+    if not session_id:
+        return Response({'error': 'session_id requis.'}, status=400)
+    try:
+        session = Session.objects.get(id=session_id)
+    except (Session.DoesNotExist, Exception):
+        return Response([], status=200)
+    items = session.history.all()[:20]
+    serializer = GenerationHistorySerializer(items, many=True)
+    return Response(serializer.data)
 
 
 @api_view(['POST'])

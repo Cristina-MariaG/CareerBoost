@@ -55,6 +55,12 @@ export async function streamCv({ job_offer, cv, cover_letter, onChunk, onDone, o
   }
 }
 
+export async function getHistory() {
+  const sessionId = getSessionId()
+  const response = await api.get(`/history/?session_id=${sessionId}`)
+  return response.data
+}
+
 export async function streamLinkedIn({ description, tone, onChunk, onDone, onError }) {
   const response = await fetch('/api/agents/linkedin/', {
     method: 'POST',

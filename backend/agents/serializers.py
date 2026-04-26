@@ -1,4 +1,16 @@
 from rest_framework import serializers
+from .models import GenerationHistory
+
+
+class GenerationHistorySerializer(serializers.ModelSerializer):
+    preview = serializers.SerializerMethodField()
+
+    class Meta:
+        model = GenerationHistory
+        fields = ['id', 'agent', 'input_data', 'preview', 'output', 'created_at']
+
+    def get_preview(self, obj):
+        return obj.output[:200].strip()
 
 
 class LinkedInRequestSerializer(serializers.Serializer):
