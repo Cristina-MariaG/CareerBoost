@@ -93,7 +93,7 @@ def cv_generate(request):
             GenerationHistory.objects.create(
                 session=session,
                 agent="cv",
-                input_data={"job_offer": data['job_offer'][:500]},
+                input_data={"job_offer": data['job_offer']},
                 output=full_output,
             )
             yield "data: [DONE]\n\n"
