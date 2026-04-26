@@ -10,8 +10,8 @@ feat/linkedin-agent-ui      ✅ terminé
 feat/pdf-handling           ✅ terminé
 feat/cv-agent-api           ✅ terminé
 feat/cv-agent-ui            ✅ terminé
-feat/frontend-design
-feat/dashboard
+feat/frontend-design        ✅ terminé
+feat/dashboard              ✅ terminé
 feat/cv-analysis
 chore/docker-prod
 ```

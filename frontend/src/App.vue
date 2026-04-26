@@ -14,6 +14,7 @@
       <nav class="nav">
         <router-link class="nav-btn" to="/linkedin" active-class="nav-btn--active">LinkedIn Post</router-link>
         <router-link class="nav-btn" to="/cv" active-class="nav-btn--active">CV &amp; Lettre</router-link>
+        <router-link class="nav-btn" to="/history" active-class="nav-btn--active">Historique</router-link>
       </nav>
     </header>
 
