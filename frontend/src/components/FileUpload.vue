@@ -1,24 +1,26 @@
 <template>
   <div
-    class="file-upload"
-    :class="{ 'file-upload--dragover': dragover, 'file-upload--has-file': modelValue, 'file-upload--error': errorMsg }"
-    @dragover.prevent="dragover = true"
+    class="drop-zone"
+    :class="{ 'drop-zone--dragover': dragover, 'drop-zone--has-file': modelValue, 'drop-zone--error': errorMsg, 'drop-zone--disabled': disabled }"
+    @dragover.prevent="!disabled && (dragover = true)"
     @dragleave="dragover = false"
-    @drop.prevent="onDrop"
-    @click="$refs.input.click()"
+    @drop.prevent="!disabled && onDrop($event)"
+    @click="!disabled && $refs.input.click()"
   >
     <input ref="input" type="file" accept=".pdf" hidden @change="onChange" />
 
-    <div v-if="modelValue" class="file-upload__file">
-      <span class="file-upload__filename">{{ modelValue.name }}</span>
-      <button class="file-upload__remove" type="button" @click.stop="clear">×</button>
-    </div>
-    <div v-else class="file-upload__placeholder">
-      <span class="file-upload__label">{{ label }}</span>
-      <span class="file-upload__hint">Glisse un PDF ici ou clique pour choisir</span>
-    </div>
+    <template v-if="modelValue">
+      <span class="drop-icon">✓</span>
+      <div class="drop-label" style="color: var(--cyan)">{{ modelValue.name }}</div>
+      <button class="drop-remove" type="button" @click.stop="clear">Supprimer</button>
+    </template>
+    <template v-else>
+      <span class="drop-icon">{{ icon }}</span>
+      <div class="drop-label">{{ label }}</div>
+      <div class="drop-hint">Glisse ou clique pour choisir</div>
+    </template>
 
-    <p v-if="errorMsg" class="file-upload__error">{{ errorMsg }}</p>
+    <p v-if="errorMsg" class="drop-error">{{ errorMsg }}</p>
   </div>
 </template>
 
@@ -28,6 +30,8 @@ import { ref } from 'vue'
 const props = defineProps({
   modelValue: { type: File, default: null },
   label: { type: String, default: 'Fichier PDF' },
+  icon: { type: String, default: '📄' },
+  disabled: { type: Boolean, default: false },
 })
 const emit = defineEmits(['update:modelValue'])
 
@@ -66,62 +70,54 @@ function clear() {
 </script>
 
 <style scoped>
-.file-upload {
-  border: 2px dashed #cbd5e1;
-  border-radius: 8px;
-  padding: 1rem;
+.drop-zone {
+  background: var(--card2);
+  border: 2px dashed rgba(255,255,255,0.18);
+  border-radius: 14px;
+  padding: 28px 16px;
+  text-align: center;
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s;
-  min-height: 80px;
+  transition: all 0.22s;
+  min-height: 110px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  text-align: center;
+  gap: 4px;
 }
-.file-upload:hover { border-color: #94a3b8; background: #f8fafc; }
-.file-upload--dragover { border-color: #0ea5e9; background: #f0f9ff; }
-.file-upload--has-file { border-style: solid; border-color: #0ea5e9; background: #f0f9ff; }
-.file-upload--error { border-color: #ef4444; }
+.drop-zone:hover { border-color: rgba(0,229,255,0.5); background: #1A2D50; }
+.drop-zone--dragover { border-color: var(--cyan); background: rgba(0,229,255,0.05); }
+.drop-zone--has-file { border-style: solid; border-color: var(--cyan); background: rgba(0,229,255,0.05); }
+.drop-zone--error { border-color: #F87171; }
+.drop-zone--disabled { opacity: 0.5; cursor: not-allowed; }
 
-.file-upload__placeholder {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-.file-upload__label {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #374151;
-}
-.file-upload__hint {
-  font-size: 0.8rem;
-  color: #94a3b8;
-}
-.file-upload__file {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.file-upload__filename {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #0369a1;
+.drop-icon { font-size: 26px; display: block; }
+.drop-label {
+  font-family: var(--fh);
+  font-size: 13px;
+  font-weight: 700;
+  color: #D8E0F0;
   word-break: break-all;
 }
-.file-upload__remove {
-  background: none;
-  border: none;
-  color: #64748b;
-  font-size: 1.2rem;
+.drop-hint { font-size: 11px; color: var(--text-muted); }
+
+.drop-remove {
+  background: rgba(248,113,113,0.1);
+  border: 1px solid rgba(248,113,113,0.3);
+  border-radius: 6px;
+  color: #F87171;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
   cursor: pointer;
-  padding: 0 0.25rem;
-  line-height: 1;
+  margin-top: 4px;
+  transition: all 0.2s;
 }
-.file-upload__remove:hover { color: #ef4444; }
-.file-upload__error {
-  margin-top: 0.5rem;
-  font-size: 0.8rem;
-  color: #ef4444;
+.drop-remove:hover { background: rgba(248,113,113,0.2); }
+
+.drop-error {
+  font-size: 11px;
+  color: #F87171;
+  margin-top: 6px;
 }
 </style>
