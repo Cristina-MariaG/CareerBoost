@@ -4,13 +4,16 @@
 
 ```
 chore/project-init          ✅ terminé
-feat/claude-client
-feat/linkedin-agent-api
-feat/linkedin-agent-ui
-feat/pdf-handling
-feat/cv-agent-api
-feat/cv-agent-ui
+feat/claude-client          ✅ terminé
+feat/linkedin-agent-api     ✅ terminé
+feat/linkedin-agent-ui      ✅ terminé
+feat/pdf-handling           ✅ terminé
+feat/cv-agent-api           ✅ terminé
+feat/cv-agent-ui            ✅ terminé
 chore/docker-prod
+feat/frontend-design
+feat/dashboard
+feat/cv-analysis
 ```
 
 ---
@@ -92,8 +95,39 @@ chore/docker-prod
 
 ---
 
+---
+
+## Milestone 7 — Dashboard & Historique
+> Done quand : l'utilisateur peut consulter ses générations passées et re-télécharger les outputs.
+
+| # | Tâche | Branche |
+|---|-------|---------|
+| 43 | Backend : endpoint `GET /api/history/` — historique de session paginé | `feat/dashboard` |
+| 44 | Backend : `GenerationHistorySerializer` | `feat/dashboard` |
+| 45 | Frontend : `HistoryView.vue` — liste des générations (date, type, aperçu) | `feat/dashboard` |
+| 46 | Frontend : bouton re-télécharger output depuis l'historique (DOCX) | `feat/dashboard` |
+| 47 | Frontend : lien "Historique" dans la navigation | `feat/dashboard` |
+| 48 | Router : ajout route `/history` | `feat/dashboard` |
+
+---
+
+---
+
+## Milestone 8 — Analyse & Recommandations CV
+> Done quand : toggle Adapter/Analyser sur la page CV — mode analyse retourne points forts + recommandations concrètes.
+
+| # | Tâche | Branche |
+|---|-------|---------|
+| 49 | Backend : champ `mode` (`adapt`\|`analyze`) dans `CvRequestSerializer` | `feat/cv-analysis` |
+| 50 | Backend : prompt analyse dans `cv_agent.py` — points forts + recommandations | `feat/cv-analysis` |
+| 51 | Backend : endpoint `/api/agents/cv/` gère les deux modes | `feat/cv-analysis` |
+| 52 | Frontend : toggle Adapter / Analyser sur `CvView.vue` | `feat/cv-analysis` |
+| 53 | Frontend : `AnalysisCard.vue` — affichage points forts et recommandations | `feat/cv-analysis` |
+| 54 | Frontend : `api.js` — passer le paramètre `mode` dans `streamCv()` | `feat/cv-analysis` |
+
+---
+
 ## Backlog (plus tard)
 
 - `feat/authentication` — login/register utilisateur (Django auth intégré)
-- `feat/history-ui` — afficher l'historique des générations
 - `feat/e2e-tests` — tests Playwright ou Cypress
