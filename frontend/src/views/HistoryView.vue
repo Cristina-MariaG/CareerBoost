@@ -32,7 +32,11 @@
         </div>
         <div class="item-right">
           <span class="item-badge">Généré</span>
-          <button class="dl-btn" @click.stop="download(item)">Télécharger</button>
+          <template v-if="item.agent === 'cv'">
+            <button class="dl-btn" @click.stop="downloadPart(cvContent(item.output), 'cv-adapte')">CV</button>
+            <button v-if="lmContent(item.output)" class="dl-btn" @click.stop="downloadPart(lmContent(item.output), 'lettre-motivation')">LM</button>
+          </template>
+          <button v-else class="dl-btn" @click.stop="downloadPart(item.output, 'post-linkedin')">Télécharger</button>
         </div>
       </div>
     </div>
@@ -55,12 +59,16 @@
           </div>
           <div class="modal-actions">
             <button class="copy-btn" @click="copy(selected.output)">{{ copied ? 'Copié ✓' : 'Copier' }}</button>
-            <button class="dl-btn" @click="download(selected)">Télécharger</button>
+            <template v-if="selected.agent === 'cv'">
+              <button class="dl-btn" @click="downloadPart(cvContent(selected.output), 'cv-adapte')">CV</button>
+              <button v-if="lmContent(selected.output)" class="dl-btn" @click="downloadPart(lmContent(selected.output), 'lettre-motivation')">LM</button>
+            </template>
+            <button v-else class="dl-btn" @click="downloadPart(selected.output, 'post-linkedin')">Télécharger</button>
             <button class="close-btn" @click="close">✕</button>
           </div>
         </div>
         <div class="modal-body">
-          <div v-if="selected.agent === 'cv' && selected.input_data.job_offer" class="modal-offer">
+          <div v-if="selected.input_data?.job_offer" class="modal-offer">
             <div class="modal-offer-label">Offre d'emploi</div>
             <div class="modal-offer-text">{{ selected.input_data.job_offer }}</div>
           </div>
@@ -84,6 +92,7 @@ const copied = ref(false)
 onMounted(async () => {
   try {
     items.value = await getHistory()
+    console.log('[history]', JSON.stringify(items.value.map(i => ({ agent: i.agent, input_data: i.input_data }))))
   } finally {
     loading.value = false
   }
@@ -105,6 +114,23 @@ function formatDate(iso) {
   })
 }
 
+const CV_HEADER = '## CV adapté'
+const LM_HEADER = '## Lettre de motivation adaptée'
+
+function cvContent(output) {
+  const cvIdx = output.indexOf(CV_HEADER)
+  if (cvIdx === -1) return output.trim()
+  const start = output.indexOf('\n', cvIdx) + 1
+  const lmIdx = output.indexOf(LM_HEADER)
+  return output.slice(start, lmIdx !== -1 ? lmIdx : output.length).trim()
+}
+
+function lmContent(output) {
+  const lmIdx = output.indexOf(LM_HEADER)
+  if (lmIdx === -1) return ''
+  return output.slice(output.indexOf('\n', lmIdx) + 1).trim()
+}
+
 function renderMd(text) {
   return text ? marked.parse(text) : ''
 }
@@ -115,9 +141,8 @@ function copy(text) {
   setTimeout(() => { copied.value = false }, 2000)
 }
 
-function download(item) {
-  const html = marked.parse(item.output)
-  const filename = item.agent === 'linkedin' ? 'post-linkedin' : 'cv-adapte'
+function downloadPart(text, filename) {
+  const html = marked.parse(text)
   const doc = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
 <head><meta charset="utf-8"><style>body{font-family:Arial,sans-serif;font-size:11pt;line-height:1.6;margin:2cm}h1,h2,h3{color:#1e293b}p{margin:0.5em 0}</style></head>
 <body>${html}</body></html>`

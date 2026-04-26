@@ -54,14 +54,15 @@ backend/
 │   ├── models.py       # Session (UUID anonyme), GenerationHistory
 │   ├── serializers.py  # LinkedInRequestSerializer + CvRequestSerializer
 │   ├── views.py        # endpoints DRF + StreamingHttpResponse (SSE)
-│   └── urls.py         # GET /api/health/, POST /api/agents/linkedin/, POST /api/agents/cv/
+│   └── urls.py         # GET /api/health/, POST /api/agents/linkedin/, POST /api/agents/cv/, GET /api/history/
 frontend/
 ├── src/
-│   ├── services/api.js          # Axios (JSON) + streamLinkedIn() + streamCv() (fetch SSE) + getSessionId()
-│   ├── router/index.js          # routes /linkedin et /cv
+│   ├── services/api.js          # Axios (JSON) + streamLinkedIn() + streamCv() (fetch SSE) + getSessionId() + getHistory()
+│   ├── router/index.js          # routes /linkedin, /cv, /history
 │   ├── views/
 │   │   ├── LinkedinView.vue     # formulaire description + sélecteur 3 tons + état streaming
-│   │   └── CvView.vue           # formulaire offre + upload CV/LM PDF + état streaming
+│   │   ├── CvView.vue           # formulaire offre + upload CV/LM PDF + état streaming
+│   │   └── HistoryView.vue      # liste des générations + modal détail (offre + output Markdown + téléchargement CV/LM)
 │   └── components/
 │       ├── PostResult.vue       # rendu Markdown streamé + bouton copier + curseur clignotant
 │       ├── FileUpload.vue       # drag & drop PDF + feedback erreur
@@ -90,7 +91,7 @@ Vue (fetch) → POST /api/agents/linkedin/  (JSON)
 | GET | `/api/health/` | Healthcheck backend |
 | POST | `/api/agents/linkedin/` | Génère un post LinkedIn (SSE) |
 | POST | `/api/agents/cv/` | Adapte CV + LM à une offre (SSE, multipart/form-data) |
-| GET | `/api/history/` | Historique des générations de la session (à venir — Milestone 7 feat/dashboard) |
+| GET | `/api/history/?session_id=<uuid>` | Historique des 20 dernières générations de la session |
 | POST | `/api/agents/cv/?mode=analyze` | Analyse CV/LM : points forts + recommandations (à venir — Milestone 8 feat/cv-analysis) |
 
 ## Décisions clés
