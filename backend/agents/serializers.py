@@ -24,6 +24,7 @@ class CvRequestSerializer(serializers.Serializer):
     session_id = serializers.UUIDField()
     cv = serializers.FileField()
     cover_letter = serializers.FileField(required=False)
+    mode = serializers.ChoiceField(choices=["adapt", "analyze"], default="adapt")
 
     def validate_cv(self, value):
         if not value.name.endswith('.pdf'):

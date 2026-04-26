@@ -4,6 +4,15 @@
     <h1>Adapte ton CV &<br><span>ta lettre</span></h1>
     <p class="subtitle">Colle l'offre d'emploi, dépose tes documents — <strong>ton agent IA fait le reste.</strong></p>
 
+    <div class="mode-toggle">
+      <button :class="['mode-btn', { active: mode === 'adapt' }]" @click="mode = 'adapt'" :disabled="streaming">
+        Adapter
+      </button>
+      <button :class="['mode-btn', { active: mode === 'analyze' }]" @click="mode = 'analyze'" :disabled="streaming">
+        Analyser
+      </button>
+    </div>
+
     <form @submit.prevent="submit">
       <div class="field">
         <label>Offre d'emploi</label>
@@ -27,13 +36,15 @@
       </div>
 
       <button class="cta-btn" type="submit" :disabled="streaming || !canSubmit">
-        {{ streaming ? 'Adaptation en cours…' : 'Adapter mes documents →' }}
+        <template v-if="streaming">{{ mode === 'analyze' ? 'Analyse en cours…' : 'Adaptation en cours…' }}</template>
+        <template v-else>{{ mode === 'analyze' ? 'Analyser mes documents →' : 'Adapter mes documents →' }}</template>
       </button>
     </form>
 
     <p v-if="error" class="error-msg">{{ error }}</p>
 
-    <ResultCard :content="result" :streaming="streaming" />
+    <AnalysisCard v-if="mode === 'analyze'" :content="result" :streaming="streaming" />
+    <ResultCard v-else :content="result" :streaming="streaming" />
   </div>
 </template>
 
@@ -42,6 +53,7 @@ import { ref, computed } from 'vue'
 import { streamCv } from '../services/api'
 import FileUpload from '../components/FileUpload.vue'
 import ResultCard from '../components/ResultCard.vue'
+import AnalysisCard from '../components/AnalysisCard.vue'
 
 const jobOffer = ref('')
 const cvFile = ref(null)
@@ -49,6 +61,7 @@ const coverLetterFile = ref(null)
 const result = ref('')
 const streaming = ref(false)
 const error = ref('')
+const mode = ref('adapt')
 
 const canSubmit = computed(() => jobOffer.value.trim().length >= 20 && cvFile.value !== null)
 
@@ -62,6 +75,7 @@ async function submit() {
     job_offer: jobOffer.value,
     cv: cvFile.value,
     cover_letter: coverLetterFile.value,
+    mode: mode.value,
     onChunk: (text) => { result.value += text },
     onDone: () => { streaming.value = false },
     onError: (err) => {
@@ -124,9 +138,39 @@ h1 span {
   font-size: 15px;
   font-weight: 300;
   line-height: 1.6;
-  margin-bottom: 40px;
+  margin-bottom: 32px;
 }
 .subtitle strong { color: #C5CEDE; font-weight: 500; }
+
+.mode-toggle {
+  display: inline-flex;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 4px;
+  gap: 4px;
+  margin-bottom: 28px;
+}
+
+.mode-btn {
+  background: transparent;
+  border: none;
+  border-radius: 9px;
+  color: var(--text-muted);
+  font-family: var(--fb);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.mode-btn:hover:not(:disabled):not(.active) { color: var(--text); }
+.mode-btn.active {
+  background: linear-gradient(135deg, rgba(0,200,224,0.2), rgba(124,58,237,0.2));
+  color: var(--cyan);
+  border: 1px solid rgba(0,200,224,0.3);
+}
+.mode-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .field { margin-bottom: 24px; }
 

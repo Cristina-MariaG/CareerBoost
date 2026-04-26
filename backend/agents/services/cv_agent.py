@@ -58,3 +58,35 @@ CV actuel :
 {task}"""
 
     yield from stream(SYSTEM_PROMPT, user_message, cache_system=True)
+
+
+SYSTEM_PROMPT_ANALYZE = """Tu es un expert en recrutement avec 15 ans d'expérience.
+Tu analyses des CV par rapport à des offres d'emploi et fournis des retours actionnables.
+Tu écris uniquement en français.
+Tu retournes uniquement l'analyse structurée, sans commentaire introductif."""
+
+
+def analyze(job_offer: str, cv_text: str, cover_letter_text: str = ""):
+    lm_section = f"\n\nLettre de motivation :\n{cover_letter_text}" if cover_letter_text else ""
+
+    user_message = f"""Offre d'emploi :
+{job_offer}
+
+CV du candidat :
+{cv_text}{lm_section}
+
+Analyse ce CV par rapport à l'offre et structure ta réponse ainsi :
+
+## Points forts
+Liste les 4 à 6 points forts du candidat pour ce poste.
+
+## Points à améliorer
+Liste les 3 à 5 points faibles ou manquants par rapport aux exigences de l'offre.
+
+## Recommandations concrètes
+Donne 4 à 6 recommandations précises et actionnables pour améliorer le CV.
+
+## Score d'adéquation
+Donne un score sur 10 avec une justification en une phrase."""
+
+    yield from stream(SYSTEM_PROMPT_ANALYZE, user_message, cache_system=True)
