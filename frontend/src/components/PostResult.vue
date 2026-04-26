@@ -1,11 +1,17 @@
 <template>
-  <div v-if="content" class="post-result">
-    <div class="post-result__header">
-      <span class="post-result__label">Post généré</span>
-      <button class="post-result__copy" @click="copy">{{ copied ? 'Copié !' : 'Copier' }}</button>
+  <div v-if="content || streaming" class="output-card">
+    <div v-if="streaming && !content" class="spinner">
+      <div class="spin"></div>
+      <span>Ton agent IA rédige…</span>
     </div>
-    <div class="post-result__body" v-html="renderedMarkdown"></div>
-    <div v-if="streaming" class="post-result__cursor">▌</div>
+    <template v-else-if="content">
+      <div class="output-header">
+        <span class="output-title">Post LinkedIn</span>
+        <button class="copy-btn" @click="copy">{{ copied ? 'Copié ✓' : 'Copier' }}</button>
+      </div>
+      <div class="output-body" v-html="renderedMarkdown"></div>
+      <div v-if="streaming" class="output-cursor">▌</div>
+    </template>
   </div>
 </template>
 
@@ -29,42 +35,81 @@ function copy() {
 </script>
 
 <style scoped>
-.post-result {
-  margin-top: 1.5rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+.output-card {
+  margin-top: 28px;
+  background: var(--card);
+  border: 1px solid rgba(0,229,255,0.22);
+  border-radius: 18px;
   overflow: hidden;
+  animation: fadeIn 0.4s ease;
 }
-.post-result__header {
+@keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+.spinner {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 1rem;
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
+  justify-content: center;
+  gap: 12px;
+  padding: 28px;
+  color: var(--text-muted);
+  font-size: 14px;
 }
-.post-result__label {
-  font-size: 0.85rem;
+.spin {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(0,229,255,0.15);
+  border-top-color: var(--cyan);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.output-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: rgba(0,229,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.output-title {
+  font-family: var(--fh);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+.copy-btn {
+  background: rgba(255,255,255,0.09);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  color: #fff;
+  font-family: var(--fb);
+  font-size: 12px;
   font-weight: 600;
-  color: #64748b;
-}
-.post-result__copy {
-  font-size: 0.8rem;
-  padding: 0.25rem 0.75rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 4px;
-  background: white;
+  padding: 5px 13px;
   cursor: pointer;
+  transition: all 0.2s;
 }
-.post-result__copy:hover { background: #f1f5f9; }
-.post-result__body {
-  padding: 1rem;
-  line-height: 1.7;
-  white-space: pre-wrap;
+.copy-btn:hover {
+  background: rgba(0,229,255,0.18);
+  color: var(--cyan);
+  border-color: rgba(0,229,255,0.4);
 }
-.post-result__cursor {
-  padding: 0 1rem 0.5rem;
-  color: #0ea5e9;
+
+.output-body {
+  padding: 22px;
+  font-size: 14px;
+  line-height: 1.85;
+  color: var(--text-body);
+}
+.output-body :deep(p) { margin-bottom: 0.75rem; }
+.output-body :deep(strong) { color: var(--text); }
+
+.output-cursor {
+  padding: 0 22px 12px;
+  color: var(--cyan);
   animation: blink 1s step-end infinite;
 }
 @keyframes blink { 50% { opacity: 0; } }
