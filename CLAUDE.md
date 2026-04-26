@@ -65,7 +65,7 @@ frontend/
 │   └── components/
 │       ├── PostResult.vue       # rendu Markdown streamé + bouton copier + curseur clignotant
 │       ├── FileUpload.vue       # drag & drop PDF + feedback erreur
-│       └── ResultCard.vue       # affichage CV + LM côte à côte, Markdown streamé
+│       └── ResultCard.vue       # affichage CV + LM côte à côte, Markdown streamé, boutons DOCX download
 ```
 
 ### Flux de données
@@ -90,6 +90,8 @@ Vue (fetch) → POST /api/agents/linkedin/  (JSON)
 | GET | `/api/health/` | Healthcheck backend |
 | POST | `/api/agents/linkedin/` | Génère un post LinkedIn (SSE) |
 | POST | `/api/agents/cv/` | Adapte CV + LM à une offre (SSE, multipart/form-data) |
+| GET | `/api/history/` | Historique des générations de la session (à venir — Milestone 7 feat/dashboard) |
+| POST | `/api/agents/cv/?mode=analyze` | Analyse CV/LM : points forts + recommandations (à venir — Milestone 8 feat/cv-analysis) |
 
 ## Décisions clés
 
@@ -123,8 +125,12 @@ Voir `.env.example`. Variables critiques :
 | `CORS_ALLOWED_ORIGINS` | Ex: `http://localhost:5173` |
 | `BACKEND_URL` | Cible du proxy Vite (docker: `http://backend:8000`) |
 
+## Outils de design
+
+**Stitch** (`/stitch-design`) — skill Claude Code pour générer des designs UI depuis du texte. Utiliser pour `feat/frontend-design` : décrire les pages, Stitch génère HTML + screenshot, résultat dans `.stitch/designs/`.
+
 ## Conventions Git
 
 - Branches : `feat/`, `fix/`, `chore/` — une branche = une PR
 - Merge sur `develop`, puis `main` quand la feature est testée
-- Ordre des branches : `chore/project-init` → `feat/claude-client` → `feat/linkedin-agent-api` → `feat/linkedin-agent-ui` → `feat/pdf-handling` → `feat/cv-agent-api` → `feat/cv-agent-ui` → `chore/docker-prod`
+- Ordre des branches : `chore/project-init` → `feat/claude-client` → `feat/linkedin-agent-api` → `feat/linkedin-agent-ui` → `feat/pdf-handling` → `feat/cv-agent-api` → `feat/cv-agent-ui` → `feat/frontend-design` (M6) → `feat/dashboard` (M7) → `feat/cv-analysis` (M8) → `chore/docker-prod` (M9, en dernier)
