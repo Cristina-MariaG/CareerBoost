@@ -1,39 +1,37 @@
 <template>
-  <div class="cv-view">
-    <h1 class="cv-view__title">Adaptateur CV & Lettre de motivation</h1>
+  <div class="container">
+    <div class="page-badge"><span class="badge-dot"></span> Agent IA — CV & Lettre</div>
+    <h1>Adapte ton CV &<br><span>ta lettre</span></h1>
+    <p class="subtitle">Colle l'offre d'emploi, dépose tes documents — <strong>ton agent IA fait le reste.</strong></p>
 
-    <form class="cv-view__form" @submit.prevent="submit">
-      <label class="cv-view__label">Offre d'emploi</label>
-      <textarea
-        v-model="jobOffer"
-        class="cv-view__textarea"
-        placeholder="Colle ici le texte de l'offre d'emploi..."
-        rows="6"
-        :disabled="streaming"
-      />
+    <form @submit.prevent="submit">
+      <div class="field">
+        <label>Offre d'emploi</label>
+        <textarea
+          v-model="jobOffer"
+          rows="6"
+          placeholder="Colle ici le texte de l'offre d'emploi…"
+          :disabled="streaming"
+        />
+      </div>
 
-      <div class="cv-view__uploads">
-        <div class="cv-view__upload-group">
-          <label class="cv-view__label">CV <span class="cv-view__required">*</span></label>
-          <FileUpload v-model="cvFile" label="Ton CV (PDF)" :disabled="streaming" />
+      <div class="drop-grid">
+        <div>
+          <label>CV <span class="tag-required">REQUIS</span></label>
+          <FileUpload v-model="cvFile" label="Ton CV (PDF)" icon="📄" :disabled="streaming" />
         </div>
-
-        <div class="cv-view__upload-group">
-          <label class="cv-view__label">Lettre de motivation <span class="cv-view__optional">optionnel</span></label>
-          <FileUpload v-model="coverLetterFile" label="Ta lettre de motivation (PDF)" :disabled="streaming" />
+        <div>
+          <label>Lettre <span class="tag-optional">OPTIONNEL</span></label>
+          <FileUpload v-model="coverLetterFile" label="Ta lettre de motivation (PDF)" icon="✉️" :disabled="streaming" />
         </div>
       </div>
 
-      <button
-        class="cv-view__submit"
-        type="submit"
-        :disabled="streaming || !canSubmit"
-      >
-        {{ streaming ? 'Génération en cours...' : 'Adapter mes documents' }}
+      <button class="cta-btn" type="submit" :disabled="streaming || !canSubmit">
+        {{ streaming ? 'Adaptation en cours…' : 'Adapter mes documents →' }}
       </button>
     </form>
 
-    <p v-if="error" class="cv-view__error">{{ error }}</p>
+    <p v-if="error" class="error-msg">{{ error }}</p>
 
     <ResultCard :content="result" :streaming="streaming" />
   </div>
@@ -75,75 +73,130 @@ async function submit() {
 </script>
 
 <style scoped>
-.cv-view {
-  max-width: 860px;
-  margin: 2rem auto;
-  padding: 0 1rem;
+.container {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 50px 40px;
 }
-.cv-view__title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  color: #1e293b;
-}
-.cv-view__form {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-.cv-view__label {
-  font-size: 0.9rem;
+
+.page-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0,229,255,0.08);
+  border: 1px solid rgba(0,229,255,0.2);
+  border-radius: 100px;
+  padding: 5px 13px;
+  font-size: 11px;
   font-weight: 600;
-  color: #374151;
+  color: var(--cyan);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
 }
-.cv-view__required { color: #ef4444; }
-.cv-view__optional {
-  font-weight: 400;
-  font-size: 0.8rem;
-  color: #94a3b8;
+.badge-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--cyan);
+  animation: pulse 2s infinite;
 }
-.cv-view__textarea {
-  padding: 0.75rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  resize: vertical;
-  font-family: inherit;
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+h1 {
+  font-family: var(--fh);
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  margin-bottom: 10px;
+  color: #fff;
 }
-.cv-view__textarea:focus {
+h1 span {
+  background: linear-gradient(135deg, var(--cyan), var(--violet));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.6;
+  margin-bottom: 40px;
+}
+.subtitle strong { color: #C5CEDE; font-weight: 500; }
+
+.field { margin-bottom: 24px; }
+
+label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #7B85A0;
+  margin-bottom: 9px;
+}
+.tag-required { color: var(--pink); font-size: 10px; letter-spacing: 0.06em; font-weight: 700; margin-left: 4px; }
+.tag-optional { color: #6B7590; font-size: 10px; letter-spacing: 0.06em; font-weight: 600; margin-left: 4px; }
+
+textarea {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px;
+  color: #E8EEF8;
+  font-family: var(--fb);
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.7;
+  padding: 16px 18px;
+  resize: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+textarea::placeholder { color: rgba(139,149,176,0.5); }
+textarea:focus {
   outline: none;
-  border-color: #0ea5e9;
+  border-color: rgba(0,229,255,0.45);
+  box-shadow: 0 0 0 3px rgba(0,229,255,0.07);
 }
-.cv-view__uploads {
+
+.drop-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  gap: 14px;
+  margin-bottom: 24px;
 }
-.cv-view__upload-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-.cv-view__submit {
-  padding: 0.75rem;
-  background: #0ea5e9;
-  color: white;
+
+.cta-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #00C8E0, #7C3AED);
   border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: 600;
+  border-radius: 14px;
+  color: #fff;
+  font-family: var(--fh);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  padding: 18px;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: all 0.25s;
+  box-shadow: 0 4px 24px rgba(0,200,224,0.18);
 }
-.cv-view__submit:hover:not(:disabled) { background: #0284c7; }
-.cv-view__submit:disabled { opacity: 0.6; cursor: not-allowed; }
-.cv-view__error {
+.cta-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(0,200,224,0.35); filter: brightness(1.1); }
+.cta-btn:active { transform: translateY(0); }
+.cta-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.error-msg {
   margin-top: 1rem;
-  color: #ef4444;
+  color: #F87171;
   font-size: 0.9rem;
 }
 
-@media (max-width: 640px) {
-  .cv-view__uploads { grid-template-columns: 1fr; }
+@media (max-width: 620px) {
+  .container { padding: 36px 18px; }
+  .drop-grid { grid-template-columns: 1fr; }
 }
 </style>

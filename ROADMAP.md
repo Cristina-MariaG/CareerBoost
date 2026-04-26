@@ -10,10 +10,10 @@ feat/linkedin-agent-ui      ✅ terminé
 feat/pdf-handling           ✅ terminé
 feat/cv-agent-api           ✅ terminé
 feat/cv-agent-ui            ✅ terminé
-chore/docker-prod
 feat/frontend-design
 feat/dashboard
 feat/cv-analysis
+chore/docker-prod
 ```
 
 ---
@@ -84,16 +84,17 @@ feat/cv-analysis
 
 ---
 
-## Milestone 6 — Production Ready
-> Done quand : `docker compose up` en prod, les deux agents fonctionnent.
+## Milestone 6 — Frontend Design
+> Done quand : toutes les pages sont redesignées avec un design system cohérent, responsive mobile.
 
 | # | Tâche | Branche |
 |---|-------|---------|
-| 27 | Docker prod config (gunicorn, nginx, env secrets) | `chore/docker-prod` |
-| 28 | PostgreSQL prod + migrations | `chore/docker-prod` |
-| 29 | README — instructions lancement dev + prod | `chore/docker-prod` |
-
----
+| 27 | Design system — couleurs, typographie, espacements | `feat/frontend-design` |
+| 28 | Navigation / Header component (logo, liens, responsive) | `feat/frontend-design` |
+| 29 | Page d'accueil / Landing (présentation des 2 agents) | `feat/frontend-design` |
+| 30 | Redesign `LinkedinView.vue` | `feat/frontend-design` |
+| 31 | Redesign `CvView.vue` + composants (FileUpload, ResultCard) | `feat/frontend-design` |
+| 32 | Responsive mobile | `feat/frontend-design` |
 
 ---
 
@@ -111,8 +112,6 @@ feat/cv-analysis
 
 ---
 
----
-
 ## Milestone 8 — Analyse & Recommandations CV
 > Done quand : toggle Adapter/Analyser sur la page CV — mode analyse retourne points forts + recommandations concrètes.
 
@@ -124,6 +123,17 @@ feat/cv-analysis
 | 52 | Frontend : toggle Adapter / Analyser sur `CvView.vue` | `feat/cv-analysis` |
 | 53 | Frontend : `AnalysisCard.vue` — affichage points forts et recommandations | `feat/cv-analysis` |
 | 54 | Frontend : `api.js` — passer le paramètre `mode` dans `streamCv()` | `feat/cv-analysis` |
+
+---
+
+## Milestone 9 — Production Ready
+> Done quand : `docker compose up` en prod, les deux agents fonctionnent.
+
+| # | Tâche | Branche |
+|---|-------|---------|
+| 55 | Docker prod config (gunicorn, nginx, env secrets) | `chore/docker-prod` |
+| 56 | PostgreSQL prod + migrations | `chore/docker-prod` |
+| 57 | README — instructions lancement dev + prod | `chore/docker-prod` |
 
 ---
 

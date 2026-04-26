@@ -1,36 +1,33 @@
 <template>
-  <div v-if="props.content || streaming" class="result-card">
-    <div class="result-card__sections" :class="{ 'result-card__sections--two-col': lmContent }">
-      <div class="result-card__section">
-        <div class="result-card__header">
-          <span class="result-card__label">CV adapté</span>
-          <div v-if="cvContent" class="result-card__actions">
-            <button class="result-card__copy" @click="copy(cvContent, 'cv')">
-              {{ copiedKey === 'cv' ? 'Copié !' : 'Copier' }}
-            </button>
-            <button class="result-card__download" @click="download(cvContent, 'cv-adapte')">
-              Télécharger
-            </button>
+  <div v-if="props.content || streaming" class="result-wrap">
+    <div v-if="streaming && !props.content" class="spinner">
+      <div class="spin"></div>
+      <span>Ton agent IA analyse…</span>
+    </div>
+
+    <div v-else-if="props.content" class="result-grid" :class="{ 'result-grid--two': lmContent }">
+      <div class="output-card">
+        <div class="output-header">
+          <span class="output-title">CV adapté</span>
+          <div class="actions" v-if="cvContent">
+            <button class="copy-btn" @click="copy(cvContent, 'cv')">{{ copiedKey === 'cv' ? 'Copié ✓' : 'Copier' }}</button>
+            <button class="dl-btn" @click="download(cvContent, 'cv-adapte')">Télécharger</button>
           </div>
         </div>
-        <div class="result-card__body" v-html="renderMd(cvContent)"></div>
-        <div v-if="streaming && !lmContent" class="result-card__cursor">▌</div>
+        <div class="output-body" v-html="renderMd(cvContent)"></div>
+        <div v-if="streaming && !lmContent" class="output-cursor">▌</div>
       </div>
 
-      <div v-if="lmContent" class="result-card__section">
-        <div class="result-card__header">
-          <span class="result-card__label">Lettre de motivation</span>
-          <div class="result-card__actions">
-            <button class="result-card__copy" @click="copy(lmContent, 'lm')">
-              {{ copiedKey === 'lm' ? 'Copié !' : 'Copier' }}
-            </button>
-            <button class="result-card__download" @click="download(lmContent, 'lettre-motivation')">
-              Télécharger
-            </button>
+      <div v-if="lmContent" class="output-card">
+        <div class="output-header">
+          <span class="output-title">Lettre de motivation</span>
+          <div class="actions">
+            <button class="copy-btn" @click="copy(lmContent, 'lm')">{{ copiedKey === 'lm' ? 'Copié ✓' : 'Copier' }}</button>
+            <button class="dl-btn" @click="download(lmContent, 'lettre-motivation')">Télécharger</button>
           </div>
         </div>
-        <div class="result-card__body" v-html="renderMd(lmContent)"></div>
-        <div v-if="streaming" class="result-card__cursor">▌</div>
+        <div class="output-body" v-html="renderMd(lmContent)"></div>
+        <div v-if="streaming" class="output-cursor">▌</div>
       </div>
     </div>
   </div>
@@ -54,16 +51,14 @@ const cvContent = computed(() => {
   if (cvIdx === -1) return c.trim()
   const start = c.indexOf('\n', cvIdx) + 1
   const lmIdx = c.indexOf(LM_HEADER)
-  const end = lmIdx !== -1 ? lmIdx : c.length
-  return c.slice(start, end).trim()
+  return c.slice(start, lmIdx !== -1 ? lmIdx : c.length).trim()
 })
 
 const lmContent = computed(() => {
   const c = props.content
   const lmIdx = c.indexOf(LM_HEADER)
   if (lmIdx === -1) return ''
-  const start = c.indexOf('\n', lmIdx) + 1
-  return c.slice(start).trim()
+  return c.slice(c.indexOf('\n', lmIdx) + 1).trim()
 })
 
 function renderMd(text) {
@@ -93,71 +88,113 @@ function download(markdownText, filename) {
 </script>
 
 <style scoped>
-.result-card {
-  margin-top: 1.5rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  overflow: hidden;
+.result-wrap { margin-top: 28px; animation: fadeIn 0.4s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+.spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 28px;
+  color: var(--text-muted);
+  font-size: 14px;
+  background: var(--card);
+  border: 1px solid rgba(0,229,255,0.22);
+  border-radius: 18px;
 }
-.result-card__sections {
+.spin {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(0,229,255,0.15);
+  border-top-color: var(--cyan);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.result-grid {
   display: grid;
   grid-template-columns: 1fr;
+  gap: 14px;
 }
-.result-card__sections--two-col {
-  grid-template-columns: 1fr 1fr;
-}
-.result-card__section {
-  border-right: 1px solid #e2e8f0;
-}
-.result-card__section:last-child { border-right: none; }
+.result-grid--two { grid-template-columns: 1fr 1fr; }
 
-.result-card__header {
+.output-card {
+  background: var(--card);
+  border: 1px solid rgba(0,229,255,0.22);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.output-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 1rem;
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: rgba(0,229,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
 }
-.result-card__label {
-  font-size: 0.85rem;
+.output-title {
+  font-family: var(--fh);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+.actions { display: flex; gap: 6px; }
+
+.copy-btn {
+  background: rgba(255,255,255,0.09);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  color: #fff;
+  font-family: var(--fb);
+  font-size: 12px;
   font-weight: 600;
-  color: #64748b;
-}
-.result-card__actions {
-  display: flex;
-  gap: 0.4rem;
-}
-.result-card__copy,
-.result-card__download {
-  font-size: 0.8rem;
-  padding: 0.25rem 0.75rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 4px;
-  background: white;
+  padding: 5px 13px;
   cursor: pointer;
+  transition: all 0.2s;
 }
-.result-card__copy:hover,
-.result-card__download:hover { background: #f1f5f9; }
-.result-card__download { border-color: #0ea5e9; color: #0369a1; }
-.result-card__download:hover { background: #f0f9ff; }
-.result-card__body {
-  padding: 1rem;
-  line-height: 1.7;
-  font-size: 0.9rem;
+.copy-btn:hover { background: rgba(0,229,255,0.18); color: var(--cyan); border-color: rgba(0,229,255,0.4); }
+
+.dl-btn {
+  background: rgba(0,229,255,0.08);
+  border: 1px solid rgba(0,229,255,0.3);
+  border-radius: 8px;
+  color: var(--cyan);
+  font-family: var(--fb);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 13px;
+  cursor: pointer;
+  transition: all 0.2s;
 }
-.result-card__cursor {
-  padding: 0 1rem 0.5rem;
-  color: #0ea5e9;
+.dl-btn:hover { background: rgba(0,229,255,0.18); }
+
+.output-body {
+  padding: 22px;
+  font-size: 14px;
+  line-height: 1.85;
+  color: var(--text-body);
+}
+.output-body :deep(p) { margin-bottom: 0.75rem; }
+.output-body :deep(strong) { color: var(--text); }
+.output-body :deep(h1), .output-body :deep(h2), .output-body :deep(h3) {
+  font-family: var(--fh);
+  color: var(--text);
+  margin: 1rem 0 0.5rem;
+}
+
+.output-cursor {
+  padding: 0 22px 12px;
+  color: var(--cyan);
   animation: blink 1s step-end infinite;
 }
 @keyframes blink { 50% { opacity: 0; } }
 
-@media (max-width: 640px) {
-  .result-card__sections--two-col {
-    grid-template-columns: 1fr;
-  }
-  .result-card__section { border-right: none; border-bottom: 1px solid #e2e8f0; }
-  .result-card__section:last-child { border-bottom: none; }
+@media (max-width: 620px) {
+  .result-grid--two { grid-template-columns: 1fr; }
 }
 </style>
