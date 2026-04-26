@@ -13,6 +13,7 @@ feat/cv-agent-ui            ✅ terminé
 chore/docker-prod
 feat/frontend-design
 feat/dashboard
+feat/cv-analysis
 ```
 
 ---
@@ -107,6 +108,22 @@ feat/dashboard
 | 46 | Frontend : bouton re-télécharger output depuis l'historique (DOCX) | `feat/dashboard` |
 | 47 | Frontend : lien "Historique" dans la navigation | `feat/dashboard` |
 | 48 | Router : ajout route `/history` | `feat/dashboard` |
+
+---
+
+---
+
+## Milestone 8 — Analyse & Recommandations CV
+> Done quand : toggle Adapter/Analyser sur la page CV — mode analyse retourne points forts + recommandations concrètes.
+
+| # | Tâche | Branche |
+|---|-------|---------|
+| 49 | Backend : champ `mode` (`adapt`\|`analyze`) dans `CvRequestSerializer` | `feat/cv-analysis` |
+| 50 | Backend : prompt analyse dans `cv_agent.py` — points forts + recommandations | `feat/cv-analysis` |
+| 51 | Backend : endpoint `/api/agents/cv/` gère les deux modes | `feat/cv-analysis` |
+| 52 | Frontend : toggle Adapter / Analyser sur `CvView.vue` | `feat/cv-analysis` |
+| 53 | Frontend : `AnalysisCard.vue` — affichage points forts et recommandations | `feat/cv-analysis` |
+| 54 | Frontend : `api.js` — passer le paramètre `mode` dans `streamCv()` | `feat/cv-analysis` |
 
 ---
 
