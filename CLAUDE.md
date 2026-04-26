@@ -65,7 +65,7 @@ frontend/
 │   └── components/
 │       ├── PostResult.vue       # rendu Markdown streamé + bouton copier + curseur clignotant
 │       ├── FileUpload.vue       # drag & drop PDF + feedback erreur
-│       └── ResultCard.vue       # affichage CV + LM côte à côte, Markdown streamé
+│       └── ResultCard.vue       # affichage CV + LM côte à côte, Markdown streamé, boutons DOCX download
 ```
 
 ### Flux de données
@@ -90,6 +90,7 @@ Vue (fetch) → POST /api/agents/linkedin/  (JSON)
 | GET | `/api/health/` | Healthcheck backend |
 | POST | `/api/agents/linkedin/` | Génère un post LinkedIn (SSE) |
 | POST | `/api/agents/cv/` | Adapte CV + LM à une offre (SSE, multipart/form-data) |
+| GET | `/api/history/` | Historique des générations de la session (à venir — feat/dashboard) |
 
 ## Décisions clés
 
@@ -127,4 +128,4 @@ Voir `.env.example`. Variables critiques :
 
 - Branches : `feat/`, `fix/`, `chore/` — une branche = une PR
 - Merge sur `develop`, puis `main` quand la feature est testée
-- Ordre des branches : `chore/project-init` → `feat/claude-client` → `feat/linkedin-agent-api` → `feat/linkedin-agent-ui` → `feat/pdf-handling` → `feat/cv-agent-api` → `feat/cv-agent-ui` → `chore/docker-prod`
+- Ordre des branches : `chore/project-init` → `feat/claude-client` → `feat/linkedin-agent-api` → `feat/linkedin-agent-ui` → `feat/pdf-handling` → `feat/cv-agent-api` → `feat/cv-agent-ui` → `chore/docker-prod` → `feat/frontend-design` → `feat/dashboard`

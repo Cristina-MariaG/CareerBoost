@@ -4,13 +4,15 @@
 
 ```
 chore/project-init          ✅ terminé
-feat/claude-client
-feat/linkedin-agent-api
-feat/linkedin-agent-ui
-feat/pdf-handling
-feat/cv-agent-api
-feat/cv-agent-ui
+feat/claude-client          ✅ terminé
+feat/linkedin-agent-api     ✅ terminé
+feat/linkedin-agent-ui      ✅ terminé
+feat/pdf-handling           ✅ terminé
+feat/cv-agent-api           ✅ terminé
+feat/cv-agent-ui            ✅ terminé
 chore/docker-prod
+feat/frontend-design
+feat/dashboard
 ```
 
 ---
@@ -92,8 +94,23 @@ chore/docker-prod
 
 ---
 
+---
+
+## Milestone 7 — Dashboard & Historique
+> Done quand : l'utilisateur peut consulter ses générations passées et re-télécharger les outputs.
+
+| # | Tâche | Branche |
+|---|-------|---------|
+| 43 | Backend : endpoint `GET /api/history/` — historique de session paginé | `feat/dashboard` |
+| 44 | Backend : `GenerationHistorySerializer` | `feat/dashboard` |
+| 45 | Frontend : `HistoryView.vue` — liste des générations (date, type, aperçu) | `feat/dashboard` |
+| 46 | Frontend : bouton re-télécharger output depuis l'historique (DOCX) | `feat/dashboard` |
+| 47 | Frontend : lien "Historique" dans la navigation | `feat/dashboard` |
+| 48 | Router : ajout route `/history` | `feat/dashboard` |
+
+---
+
 ## Backlog (plus tard)
 
 - `feat/authentication` — login/register utilisateur (Django auth intégré)
-- `feat/history-ui` — afficher l'historique des générations
 - `feat/e2e-tests` — tests Playwright ou Cypress
