@@ -12,11 +12,14 @@ Tu retournes uniquement le contenu adapté, sans commentaire ni explication."""
 
 
 def extract_text_from_pdf(file_bytes: bytes) -> str:
-    with pdfplumber.open(BytesIO(file_bytes)) as pdf:
-        pages = [page.extract_text() or "" for page in pdf.pages]
+    try:
+        with pdfplumber.open(BytesIO(file_bytes)) as pdf:
+            pages = [page.extract_text() or "" for page in pdf.pages]
+    except Exception:
+        raise ClaudeError("Impossible de lire le PDF. Vérifie que le fichier n'est pas corrompu.")
     text = "\n\n".join(pages).strip()
     if not text:
-        raise ClaudeError("Le PDF ne contient pas de texte extractible.")
+        raise ClaudeError("Le PDF ne contient pas de texte extractible (PDF scanné ou image).")
     return text
 
 
@@ -30,8 +33,10 @@ def generate(job_offer: str, cv_text: str, cover_letter_text: str = ""):
 
 Pour la lettre de motivation, respecte impérativement cette structure en 4 parties :
 1. Premier paragraphe : présentation du candidat (qui je suis, mon parcours en une phrase).
-2. Deuxième paragraphe : pourquoi cette entreprise — montrer que tu la connais, ce qui t'attire spécifiquement dans ses valeurs, son secteur ou ses projets.
-3. Troisième paragraphe : ce que le candidat peut apporter à l'entreprise via ce poste — compétences concrètes, réalisations pertinentes, valeur ajoutée.
+2. Deuxième paragraphe : pourquoi cette entreprise — montrer que tu la connais, ce qui t'attire
+   spécifiquement dans ses valeurs, son secteur ou ses projets.
+3. Troisième paragraphe : ce que le candidat peut apporter à l'entreprise via ce poste —
+   compétences concrètes, réalisations pertinentes, valeur ajoutée.
 4. Phrase de clôture élégante et professionnelle (une seule phrase, formule de politesse incluse).
 
 Structure ta réponse ainsi :
@@ -47,13 +52,15 @@ Structure ta réponse ainsi :
 ## CV adapté
 [CV adapté ici]"""
 
-    lm_section = f"\n\nLettre de motivation actuelle :\n{cover_letter_text}" if cover_letter_text else ""
+    lm_section = f"\n\n<cover_letter>\n{cover_letter_text}\n</cover_letter>" if cover_letter_text else ""
 
-    user_message = f"""Offre d'emploi :
+    user_message = f"""<job_offer>
 {job_offer}
+</job_offer>
 
-CV actuel :
-{cv_text}{lm_section}
+<cv>
+{cv_text}
+</cv>{lm_section}
 
 {task}"""
 
@@ -67,13 +74,15 @@ Tu retournes uniquement l'analyse structurée, sans commentaire introductif."""
 
 
 def analyze(job_offer: str, cv_text: str, cover_letter_text: str = ""):
-    lm_section = f"\n\nLettre de motivation :\n{cover_letter_text}" if cover_letter_text else ""
+    lm_section = f"\n\n<cover_letter>\n{cover_letter_text}\n</cover_letter>" if cover_letter_text else ""
 
-    user_message = f"""Offre d'emploi :
+    user_message = f"""<job_offer>
 {job_offer}
+</job_offer>
 
-CV du candidat :
-{cv_text}{lm_section}
+<cv>
+{cv_text}
+</cv>{lm_section}
 
 Analyse ce CV par rapport à l'offre et structure ta réponse ainsi :
 

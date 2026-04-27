@@ -32,7 +32,7 @@
         </div>
       </div>
 
-      <button class="cta-btn" type="submit" :disabled="streaming || !description.trim()">
+      <button class="cta-btn" type="submit" :disabled="streaming || description.trim().length < 10">
         {{ streaming ? 'Génération en cours…' : 'Générer le post →' }}
       </button>
     </form>
@@ -71,7 +71,13 @@ async function submit() {
     tone: tone.value,
     onChunk: (text) => { result.value += text },
     onDone: () => { streaming.value = false },
-    onError: (err) => { error.value = typeof err === 'string' ? err : 'Une erreur est survenue.'; streaming.value = false },
+    onError: (err) => {
+      if (typeof err === 'string') error.value = err
+      else if (err?.description?.[0]) error.value = err.description[0]
+      else if (err?.tone?.[0]) error.value = err.tone[0]
+      else error.value = 'Une erreur est survenue.'
+      streaming.value = false
+    },
   })
 }
 </script>

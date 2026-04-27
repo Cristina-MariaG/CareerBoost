@@ -82,6 +82,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { marked } from 'marked'
+import DOMPurify from 'dompurify'
 import { getHistory } from '../services/api'
 
 const items = ref([])
@@ -92,7 +93,8 @@ const copied = ref(false)
 onMounted(async () => {
   try {
     items.value = await getHistory()
-    console.log('[history]', JSON.stringify(items.value.map(i => ({ agent: i.agent, input_data: i.input_data }))))
+  } catch {
+    // keep items empty, user sees "Aucune génération"
   } finally {
     loading.value = false
   }
@@ -132,7 +134,7 @@ function lmContent(output) {
 }
 
 function renderMd(text) {
-  return text ? marked.parse(text) : ''
+  return text ? DOMPurify.sanitize(marked.parse(text)) : ''
 }
 
 function copy(text) {

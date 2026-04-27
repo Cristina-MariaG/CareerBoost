@@ -6,13 +6,18 @@ class ClaudeError(Exception):
     pass
 
 
+_client: anthropic.Anthropic | None = None
+
+
+def _get_client() -> anthropic.Anthropic:
+    global _client
+    if _client is None:
+        _client = anthropic.Anthropic(api_key=settings.ANTHROPIC_API_KEY)
+    return _client
+
+
 def stream(system_prompt: str, user_message: str, cache_system: bool = False):
-    """
-    Streams Claude's response token by token.
-    Yields text chunks as they arrive.
-    cache_system=True activates prompt caching on the system prompt (useful for long contexts).
-    """
-    client = anthropic.Anthropic(api_key=settings.ANTHROPIC_API_KEY)
+    client = _get_client()
 
     system = _build_system(system_prompt, cache_system)
 

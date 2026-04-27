@@ -10,13 +10,14 @@
 <script setup>
 import { computed } from 'vue'
 import { marked } from 'marked'
+import DOMPurify from 'dompurify'
 
 const props = defineProps({
   content: { type: String, default: '' },
   streaming: { type: Boolean, default: false },
 })
 
-const renderedContent = computed(() => marked.parse(props.content + (props.streaming ? '▍' : '')))
+const renderedContent = computed(() => DOMPurify.sanitize(marked.parse(props.content + (props.streaming ? '▍' : ''))))
 </script>
 
 <style scoped>

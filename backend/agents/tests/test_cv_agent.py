@@ -1,5 +1,4 @@
 import io
-import json
 import uuid
 from unittest.mock import patch, MagicMock
 from django.test import TestCase, Client
@@ -9,9 +8,6 @@ from agents.services.claude_client import ClaudeError
 
 
 def _make_pdf(text="Mon CV en Python"):
-    """Creates a minimal in-memory PDF with pdfplumber-readable text."""
-    import pdfplumber
-    # Build a real minimal PDF bytes using reportlab if available, otherwise use a fixture
     # We mock pdfplumber.open instead to avoid needing a real PDF in tests.
     pass
 
@@ -80,7 +76,7 @@ class CvEndpointTest(TestCase):
         mock_generate.return_value = iter(["CV adapté"])
         response = self._post(
             job_offer="Développeur Python senior avec 5 ans d'expérience en Django.",
-            cv_bytes=b"fake-pdf",
+            cv_bytes=b"%PDF-fake",
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], "text/event-stream")
@@ -92,7 +88,7 @@ class CvEndpointTest(TestCase):
         mock_generate.return_value = iter(["Bonjour", " CV"])
         response = self._post(
             job_offer="Développeur Python senior avec 5 ans d'expérience en Django.",
-            cv_bytes=b"fake-pdf",
+            cv_bytes=b"%PDF-fake",
         )
         content = b"".join(response.streaming_content).decode()
         self.assertIn('"text": "Bonjour"', content)
@@ -105,7 +101,7 @@ class CvEndpointTest(TestCase):
         mock_generate.return_value = iter(["CV généré"])
         response = self._post(
             job_offer="Développeur Python senior avec 5 ans d'expérience en Django.",
-            cv_bytes=b"fake-pdf",
+            cv_bytes=b"%PDF-fake",
         )
         b"".join(response.streaming_content)
         self.assertEqual(GenerationHistory.objects.count(), 1)
@@ -120,7 +116,7 @@ class CvEndpointTest(TestCase):
         mock_generate.return_value = iter(["ok"])
         self._post(
             job_offer="Développeur Python senior avec 5 ans d'expérience en Django.",
-            cv_bytes=b"fake-pdf",
+            cv_bytes=b"%PDF-fake",
         )
         self.assertTrue(Session.objects.filter(id=self.session_id).exists())
 

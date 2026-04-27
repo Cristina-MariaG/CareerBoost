@@ -46,16 +46,21 @@ def linkedin_generate(request):
                 yield f"data: {json.dumps({'text': chunk})}\n\n"
 
             full_output = "".join(output_chunks)
-            GenerationHistory.objects.create(
-                session=session,
-                agent="linkedin",
-                input_data={"description": data['description'], "tone": data['tone']},
-                output=full_output,
-            )
+            try:
+                GenerationHistory.objects.create(
+                    session=session,
+                    agent="linkedin",
+                    input_data={"description": data['description'], "tone": data['tone']},
+                    output=full_output,
+                )
+            except Exception:
+                pass
             yield "data: [DONE]\n\n"
 
         except ClaudeError as e:
             yield f"data: {json.dumps({'error': str(e)})}\n\n"
+        except Exception:
+            yield f"data: {json.dumps({'error': 'Une erreur inattendue est survenue.'})}\n\n"
 
     response = StreamingHttpResponse(event_stream(), content_type="text/event-stream")
     response['Cache-Control'] = 'no-cache'
@@ -93,16 +98,21 @@ def cv_generate(request):
                 yield f"data: {json.dumps({'text': chunk})}\n\n"
 
             full_output = "".join(output_chunks)
-            GenerationHistory.objects.create(
-                session=session,
-                agent="cv",
-                input_data={"job_offer": data['job_offer'], "mode": mode},
-                output=full_output,
-            )
+            try:
+                GenerationHistory.objects.create(
+                    session=session,
+                    agent="cv",
+                    input_data={"job_offer": data['job_offer'], "mode": mode},
+                    output=full_output,
+                )
+            except Exception:
+                pass
             yield "data: [DONE]\n\n"
 
         except ClaudeError as e:
             yield f"data: {json.dumps({'error': str(e)})}\n\n"
+        except Exception:
+            yield f"data: {json.dumps({'error': 'Une erreur inattendue est survenue.'})}\n\n"
 
     response = StreamingHttpResponse(event_stream(), content_type="text/event-stream")
     response['Cache-Control'] = 'no-cache'

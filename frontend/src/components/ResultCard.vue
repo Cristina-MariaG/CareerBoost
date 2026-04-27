@@ -36,6 +36,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { marked } from 'marked'
+import DOMPurify from 'dompurify'
 
 const props = defineProps({
   content: { type: String, default: '' },
@@ -62,7 +63,7 @@ const lmContent = computed(() => {
 })
 
 function renderMd(text) {
-  return text ? marked.parse(text) : ''
+  return text ? DOMPurify.sanitize(marked.parse(text)) : ''
 }
 
 const copiedKey = ref('')
