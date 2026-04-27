@@ -33,8 +33,10 @@ def generate(job_offer: str, cv_text: str, cover_letter_text: str = ""):
 
 Pour la lettre de motivation, respecte impérativement cette structure en 4 parties :
 1. Premier paragraphe : présentation du candidat (qui je suis, mon parcours en une phrase).
-2. Deuxième paragraphe : pourquoi cette entreprise — montrer que tu la connais, ce qui t'attire spécifiquement dans ses valeurs, son secteur ou ses projets.
-3. Troisième paragraphe : ce que le candidat peut apporter à l'entreprise via ce poste — compétences concrètes, réalisations pertinentes, valeur ajoutée.
+2. Deuxième paragraphe : pourquoi cette entreprise — montrer que tu la connais, ce qui t'attire
+   spécifiquement dans ses valeurs, son secteur ou ses projets.
+3. Troisième paragraphe : ce que le candidat peut apporter à l'entreprise via ce poste —
+   compétences concrètes, réalisations pertinentes, valeur ajoutée.
 4. Phrase de clôture élégante et professionnelle (une seule phrase, formule de politesse incluse).
 
 Structure ta réponse ainsi :

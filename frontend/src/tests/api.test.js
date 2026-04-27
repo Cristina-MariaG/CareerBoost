@@ -17,8 +17,7 @@ global.crypto = { randomUUID: () => '550e8400-e29b-41d4-a716-446655440000' }
 describe('getSessionId', () => {
   beforeEach(() => localStorageMock.clear())
 
-  it('creates and stores a new UUID on first call', async () => {
-    const { streamCv } = await import('../services/api.js')
+  it('starts with no session_id in localStorage', () => {
     expect(localStorage.getItem('session_id')).toBe(null)
   })
 

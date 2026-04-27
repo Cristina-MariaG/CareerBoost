@@ -1,5 +1,4 @@
 import io
-import json
 import uuid
 from unittest.mock import patch, MagicMock
 from django.test import TestCase, Client
@@ -9,9 +8,6 @@ from agents.services.claude_client import ClaudeError
 
 
 def _make_pdf(text="Mon CV en Python"):
-    """Creates a minimal in-memory PDF with pdfplumber-readable text."""
-    import pdfplumber
-    # Build a real minimal PDF bytes using reportlab if available, otherwise use a fixture
     # We mock pdfplumber.open instead to avoid needing a real PDF in tests.
     pass
 
