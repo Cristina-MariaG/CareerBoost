@@ -12,6 +12,8 @@
 
 Les deux agents streamaient les réponses token par token via SSE — pas d'attente bloquante.
 
+![Agent LinkedIn — génération de post en temps réel](docs/Agent_linkedin.png)
+
 ---
 
 ## Stack
