@@ -50,13 +50,15 @@ Structure ta réponse ainsi :
 ## CV adapté
 [CV adapté ici]"""
 
-    lm_section = f"\n\nLettre de motivation actuelle :\n{cover_letter_text}" if cover_letter_text else ""
+    lm_section = f"\n\n<cover_letter>\n{cover_letter_text}\n</cover_letter>" if cover_letter_text else ""
 
-    user_message = f"""Offre d'emploi :
+    user_message = f"""<job_offer>
 {job_offer}
+</job_offer>
 
-CV actuel :
-{cv_text}{lm_section}
+<cv>
+{cv_text}
+</cv>{lm_section}
 
 {task}"""
 
@@ -70,13 +72,15 @@ Tu retournes uniquement l'analyse structurée, sans commentaire introductif."""
 
 
 def analyze(job_offer: str, cv_text: str, cover_letter_text: str = ""):
-    lm_section = f"\n\nLettre de motivation :\n{cover_letter_text}" if cover_letter_text else ""
+    lm_section = f"\n\n<cover_letter>\n{cover_letter_text}\n</cover_letter>" if cover_letter_text else ""
 
-    user_message = f"""Offre d'emploi :
+    user_message = f"""<job_offer>
 {job_offer}
+</job_offer>
 
-CV du candidat :
-{cv_text}{lm_section}
+<cv>
+{cv_text}
+</cv>{lm_section}
 
 Analyse ce CV par rapport à l'offre et structure ta réponse ainsi :
 
