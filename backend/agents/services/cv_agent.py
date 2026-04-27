@@ -12,11 +12,14 @@ Tu retournes uniquement le contenu adapté, sans commentaire ni explication."""
 
 
 def extract_text_from_pdf(file_bytes: bytes) -> str:
-    with pdfplumber.open(BytesIO(file_bytes)) as pdf:
-        pages = [page.extract_text() or "" for page in pdf.pages]
+    try:
+        with pdfplumber.open(BytesIO(file_bytes)) as pdf:
+            pages = [page.extract_text() or "" for page in pdf.pages]
+    except Exception:
+        raise ClaudeError("Impossible de lire le PDF. Vérifie que le fichier n'est pas corrompu.")
     text = "\n\n".join(pages).strip()
     if not text:
-        raise ClaudeError("Le PDF ne contient pas de texte extractible.")
+        raise ClaudeError("Le PDF ne contient pas de texte extractible (PDF scanné ou image).")
     return text
 
 
