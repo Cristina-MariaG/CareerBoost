@@ -1,82 +1,116 @@
-# CareerBoost
+# CareerBoost IA
 
-Application web avec deux agents IA propulsés par Claude (Anthropic) :
-
-- **Agent LinkedIn** — génère un post LinkedIn optimisé à partir d'une description, avec choix de ton (professionnel, storytelling, technique)
-- **Agent CV & LM** — adapte un CV et une lettre de motivation à une offre d'emploi (upload PDF)
-
-**Stack :** Django 5 + DRF · Vue.js 3 · PostgreSQL · Docker · Anthropic SDK
+> Deux agents IA propulsés par Claude (Anthropic) pour booster ta recherche d'emploi.
 
 ---
 
-## Prérequis
+## Agents
 
-- [Docker](https://www.docker.com/) installé
-- Une clé API Anthropic ([console.anthropic.com](https://console.anthropic.com))
+**Agent CV & Lettre de motivation** — Uploade ton CV en PDF et colle une offre d'emploi. L'agent adapte ton CV et ta lettre au poste visé, ou analyse ton profil et te donne un score d'adéquation /10 avec des recommandations concrètes.
+
+**Agent LinkedIn** — Décris une expérience ou un projet. L'agent génère un post LinkedIn optimisé selon le ton choisi : professionnel, storytelling ou technique.
+
+Les deux agents streamaient les réponses token par token via SSE — pas d'attente bloquante.
 
 ---
 
-## Premier démarrage
+## Stack
+
+| Couche | Technologie |
+|--------|-------------|
+| Backend | Python 3.13 · Django 5 · Django REST Framework |
+| IA | Anthropic SDK · Claude Sonnet · streaming SSE · prompt caching |
+| Frontend | Vue.js 3 · Vite · Vue Router |
+| Base de données | PostgreSQL 16 |
+| Infrastructure | Docker · docker-compose · Gunicorn |
+
+---
+
+## Démarrage rapide
+
+**Prérequis :** Docker + une clé API Anthropic ([console.anthropic.com](https://console.anthropic.com))
 
 ```bash
-# 1. Copier le fichier d'environnement et renseigner la clé API
+# 1. Configurer l'environnement
 cp .env.example .env
-# Ouvrir .env et remplir ANTHROPIC_API_KEY
+# Renseigner ANTHROPIC_API_KEY et DJANGO_SECRET_KEY dans .env
 
-# 2. Construire et démarrer les conteneurs
+# 2. Lancer l'application
 docker compose up --build
 
-# 3. Dans un autre terminal — lancer les migrations (une seule fois)
-docker compose exec backend python manage.py migrate
-
-# 4. Vérifier que le backend répond
+# 3. Vérifier que le backend répond
 curl http://localhost:8000/api/health/
 # → {"status": "ok"}
 ```
 
-L'application est disponible sur `http://localhost:5173`.
-
----
-
-## Démarrages suivants
-
-```bash
-docker compose up
-```
+L'application est disponible sur **http://localhost:5173**
 
 ---
 
 ## Commandes utiles
 
 ```bash
-# Créer les migrations après modification des models
-docker compose exec backend python manage.py makemigrations
+# Tests backend
+docker compose exec backend python manage.py test agents
 
-# Appliquer les migrations
+# Tests frontend
+cd frontend && npm test
+
+# Migrations
 docker compose exec backend python manage.py migrate
 
-# Accéder au shell Django
-docker compose exec backend python manage.py shell
-
-# Logs d'un service spécifique
+# Logs
 docker compose logs -f backend
 docker compose logs -f frontend
 
-# Stopper et supprimer les conteneurs
-docker compose down
-
-# Stopper et supprimer aussi les volumes (repart de zéro)
+# Réinitialiser complètement
 docker compose down -v
 ```
 
 ---
 
-## Structure
+## Architecture
 
 ```
-backend/        Django 5 + DRF + agents IA
-frontend/       Vue.js 3 + Vite
-docker-compose.yml
+backend/
+├── config/              # Django settings, urls, wsgi
+└── agents/
+    ├── services/
+    │   ├── claude_client.py   # Wrapper SDK Anthropic — streaming SSE, prompt caching
+    │   ├── cv_agent.py        # Agent CV & LM — adaptation + analyse
+    │   └── linkedin_agent.py  # Agent LinkedIn — 3 tons
+    ├── models.py              # Session (UUID anonyme), GenerationHistory
+    ├── serializers.py         # Validation des inputs (PDF magic bytes, choix de ton…)
+    ├── views.py               # Endpoints DRF + StreamingHttpResponse
+    └── tests/                 # 24 tests — claude_client, cv_agent, linkedin_agent
+
+frontend/
+├── src/
+│   ├── services/api.js        # fetch SSE (streamCv, streamLinkedIn) + session UUID
+│   ├── views/                 # LinkedinView, CvView (toggle Adapter/Analyser), HistoryView
+│   ├── components/            # PostResult, ResultCard, AnalysisCard, FileUpload
+│   └── tests/                 # Vitest — FileUpload, PostResult, api.js
 ```
 
-Voir [ROADMAP.md](ROADMAP.md) pour l'avancement du projet.
+### Flux de données
+
+```
+Vue (fetch) → POST /api/agents/cv/      (multipart : offre + PDF)
+           → POST /api/agents/linkedin/ (JSON : description + ton)
+  → Serializer (validation)
+  → DRF view → agent service → claude_client (streaming Claude)
+  → StreamingHttpResponse SSE → Vue affiche token par token
+  → GenerationHistory sauvegardé en base
+```
+
+---
+
+## Variables d'environnement
+
+Voir `.env.example`. Variables obligatoires :
+
+| Variable | Description |
+|----------|-------------|
+| `ANTHROPIC_API_KEY` | Clé API Anthropic |
+| `DJANGO_SECRET_KEY` | Secret Django (min. 50 caractères aléatoires) |
+| `POSTGRES_DB` / `POSTGRES_USER` / `POSTGRES_PASSWORD` | Credentials PostgreSQL |
