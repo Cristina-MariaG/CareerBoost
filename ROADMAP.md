@@ -12,8 +12,7 @@ feat/cv-agent-api           ✅ terminé
 feat/cv-agent-ui            ✅ terminé
 feat/frontend-design        ✅ terminé
 feat/dashboard              ✅ terminé
-feat/cv-analysis
-chore/docker-prod
+feat/cv-analysis            ✅ terminé
 ```
 
 ---
@@ -123,21 +122,3 @@ chore/docker-prod
 | 52 | Frontend : toggle Adapter / Analyser sur `CvView.vue` | `feat/cv-analysis` |
 | 53 | Frontend : `AnalysisCard.vue` — affichage points forts et recommandations | `feat/cv-analysis` |
 | 54 | Frontend : `api.js` — passer le paramètre `mode` dans `streamCv()` | `feat/cv-analysis` |
-
----
-
-## Milestone 9 — Production Ready
-> Done quand : `docker compose up` en prod, les deux agents fonctionnent.
-
-| # | Tâche | Branche |
-|---|-------|---------|
-| 55 | Docker prod config (gunicorn, nginx, env secrets) | `chore/docker-prod` |
-| 56 | PostgreSQL prod + migrations | `chore/docker-prod` |
-| 57 | README — instructions lancement dev + prod | `chore/docker-prod` |
-
----
-
-## Backlog (plus tard)
-
-- `feat/authentication` — login/register utilisateur (Django auth intégré)
-- `feat/e2e-tests` — tests Playwright ou Cypress

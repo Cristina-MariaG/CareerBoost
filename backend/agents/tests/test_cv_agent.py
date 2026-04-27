@@ -76,7 +76,7 @@ class CvEndpointTest(TestCase):
         mock_generate.return_value = iter(["CV adapté"])
         response = self._post(
             job_offer="Développeur Python senior avec 5 ans d'expérience en Django.",
-            cv_bytes=b"fake-pdf",
+            cv_bytes=b"%PDF-fake",
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], "text/event-stream")
@@ -88,7 +88,7 @@ class CvEndpointTest(TestCase):
         mock_generate.return_value = iter(["Bonjour", " CV"])
         response = self._post(
             job_offer="Développeur Python senior avec 5 ans d'expérience en Django.",
-            cv_bytes=b"fake-pdf",
+            cv_bytes=b"%PDF-fake",
         )
         content = b"".join(response.streaming_content).decode()
         self.assertIn('"text": "Bonjour"', content)
@@ -101,7 +101,7 @@ class CvEndpointTest(TestCase):
         mock_generate.return_value = iter(["CV généré"])
         response = self._post(
             job_offer="Développeur Python senior avec 5 ans d'expérience en Django.",
-            cv_bytes=b"fake-pdf",
+            cv_bytes=b"%PDF-fake",
         )
         b"".join(response.streaming_content)
         self.assertEqual(GenerationHistory.objects.count(), 1)
@@ -116,7 +116,7 @@ class CvEndpointTest(TestCase):
         mock_generate.return_value = iter(["ok"])
         self._post(
             job_offer="Développeur Python senior avec 5 ans d'expérience en Django.",
-            cv_bytes=b"fake-pdf",
+            cv_bytes=b"%PDF-fake",
         )
         self.assertTrue(Session.objects.filter(id=self.session_id).exists())
 
