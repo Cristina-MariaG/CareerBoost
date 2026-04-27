@@ -38,3 +38,4 @@ Thumbs.db
 
 # Local
 my_infos/
+.claude/settings.local.json

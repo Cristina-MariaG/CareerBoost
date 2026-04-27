@@ -16,11 +16,12 @@ function getSessionId() {
   return id
 }
 
-export async function streamCv({ job_offer, cv, cover_letter, onChunk, onDone, onError }) {
+export async function streamCv({ job_offer, cv, cover_letter, mode = 'adapt', onChunk, onDone, onError }) {
   const formData = new FormData()
   formData.append('job_offer', job_offer)
   formData.append('session_id', getSessionId())
   formData.append('cv', cv)
+  formData.append('mode', mode)
   if (cover_letter) formData.append('cover_letter', cover_letter)
 
   const response = await fetch('/api/agents/cv/', {
@@ -53,6 +54,12 @@ export async function streamCv({ job_offer, cv, cover_letter, onChunk, onDone, o
       } catch {}
     }
   }
+}
+
+export async function getHistory() {
+  const sessionId = getSessionId()
+  const response = await api.get(`/history/?session_id=${sessionId}`)
+  return response.data
 }
 
 export async function streamLinkedIn({ description, tone, onChunk, onDone, onError }) {

@@ -5,4 +5,5 @@ urlpatterns = [
     path('health/', views.health_check),
     path('agents/linkedin/', views.linkedin_generate),
     path('agents/cv/', views.cv_generate),
+    path('history/', views.history),
 ]
