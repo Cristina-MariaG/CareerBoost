@@ -26,16 +26,19 @@ class CvRequestSerializer(serializers.Serializer):
     cover_letter = serializers.FileField(required=False)
     mode = serializers.ChoiceField(choices=["adapt", "analyze"], default="adapt")
 
-    def validate_cv(self, value):
-        if not value.name.endswith('.pdf'):
-            raise serializers.ValidationError("Le CV doit être un fichier PDF.")
+    def _validate_pdf(self, value, label):
         if value.size > 5 * 1024 * 1024:
-            raise serializers.ValidationError("Le CV ne doit pas dépasser 5 Mo.")
+            raise serializers.ValidationError(f"{label} ne doit pas dépasser 5 Mo.")
+        header = value.read(4)
+        value.seek(0)
+        if header != b'%PDF':
+            raise serializers.ValidationError(f"{label} doit être un fichier PDF valide.")
         return value
 
+    def validate_cv(self, value):
+        return self._validate_pdf(value, "Le CV")
+
     def validate_cover_letter(self, value):
-        if value and not value.name.endswith('.pdf'):
-            raise serializers.ValidationError("La lettre de motivation doit être un fichier PDF.")
-        if value and value.size > 5 * 1024 * 1024:
-            raise serializers.ValidationError("La lettre de motivation ne doit pas dépasser 5 Mo.")
+        if value:
+            return self._validate_pdf(value, "La lettre de motivation")
         return value

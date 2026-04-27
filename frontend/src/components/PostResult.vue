@@ -18,13 +18,14 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { marked } from 'marked'
+import DOMPurify from 'dompurify'
 
 const props = defineProps({
   content: { type: String, default: '' },
   streaming: { type: Boolean, default: false },
 })
 
-const renderedMarkdown = computed(() => marked.parse(props.content))
+const renderedMarkdown = computed(() => DOMPurify.sanitize(marked.parse(props.content)))
 
 const copied = ref(false)
 function copy() {

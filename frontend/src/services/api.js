@@ -37,6 +37,7 @@ export async function streamCv({ job_offer, cv, cover_letter, mode = 'adapt', on
 
   const reader = response.body.getReader()
   const decoder = new TextDecoder()
+  let finished = false
 
   while (true) {
     const { done, value } = await reader.read()
@@ -46,14 +47,16 @@ export async function streamCv({ job_offer, cv, cover_letter, mode = 'adapt', on
     for (const line of lines) {
       if (!line.startsWith('data: ')) continue
       const payload = line.slice(6)
-      if (payload === '[DONE]') { onDone(); return }
+      if (payload === '[DONE]') { finished = true; onDone(); return }
       try {
         const { text, error } = JSON.parse(payload)
-        if (error) { onError(error); return }
+        if (error) { finished = true; onError(error); return }
         if (text) onChunk(text)
       } catch {}
     }
   }
+
+  if (!finished) onError('La connexion a été interrompue. Réessaie.')
 }
 
 export async function getHistory() {
@@ -77,6 +80,7 @@ export async function streamLinkedIn({ description, tone, onChunk, onDone, onErr
 
   const reader = response.body.getReader()
   const decoder = new TextDecoder()
+  let finished = false
 
   while (true) {
     const { done, value } = await reader.read()
@@ -86,12 +90,14 @@ export async function streamLinkedIn({ description, tone, onChunk, onDone, onErr
     for (const line of lines) {
       if (!line.startsWith('data: ')) continue
       const payload = line.slice(6)
-      if (payload === '[DONE]') { onDone(); return }
+      if (payload === '[DONE]') { finished = true; onDone(); return }
       try {
         const { text, error } = JSON.parse(payload)
-        if (error) { onError(error); return }
+        if (error) { finished = true; onError(error); return }
         if (text) onChunk(text)
       } catch {}
     }
   }
+
+  if (!finished) onError('La connexion a été interrompue. Réessaie.')
 }

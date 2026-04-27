@@ -39,3 +39,5 @@ Thumbs.db
 # Local
 my_infos/
 .claude/settings.local.json
+CLAUDE.md
+my_infos/

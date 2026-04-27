@@ -27,7 +27,7 @@
 <script setup>
 import { ref } from 'vue'
 
-const props = defineProps({
+defineProps({
   modelValue: { type: File, default: null },
   label: { type: String, default: 'Fichier PDF' },
   icon: { type: String, default: '📄' },
