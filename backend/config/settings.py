@@ -1,13 +1,22 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from django.core.exceptions import ImproperlyConfigured
 
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'dev-secret-key-change-in-prod')
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+
+def _require_env(key):
+    val = os.environ.get(key)
+    if not val:
+        raise ImproperlyConfigured(f"Missing required environment variable: {key}")
+    return val
+
+
+SECRET_KEY = _require_env('DJANGO_SECRET_KEY')
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 INSTALLED_APPS = [
@@ -56,9 +65,9 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_DB', 'careerboost'),
-        'USER': os.environ.get('POSTGRES_USER', 'careerboost'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'careerboost'),
+        'NAME': _require_env('POSTGRES_DB'),
+        'USER': _require_env('POSTGRES_USER'),
+        'PASSWORD': _require_env('POSTGRES_PASSWORD'),
         'HOST': os.environ.get('POSTGRES_HOST', 'db'),
         'PORT': os.environ.get('POSTGRES_PORT', '5432'),
     }
@@ -96,4 +105,4 @@ REST_FRAMEWORK = {
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY', '')
+ANTHROPIC_API_KEY = _require_env('ANTHROPIC_API_KEY')
