@@ -53,8 +53,14 @@ L'application est disponible sur **http://localhost:5173**
 # Tests backend
 docker compose exec backend python manage.py test agents
 
+# Lint backend (Flake8)
+docker compose exec backend flake8 .
+
 # Tests frontend
 cd frontend && npm test
+
+# Lint frontend (ESLint)
+cd frontend && npm run lint
 
 # Migrations
 docker compose exec backend python manage.py migrate
