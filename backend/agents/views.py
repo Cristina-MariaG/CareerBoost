@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from .models import Session, GenerationHistory
 from .serializers import LinkedInRequestSerializer, CvRequestSerializer, GenerationHistorySerializer
 from .services.linkedin_agent import generate as linkedin_agent_generate
-from .services.cv_agent import generate as cv_agent_generate, extract_text_from_pdf
+from .services.cv_agent import generate as cv_agent_generate, analyze as cv_agent_analyze, extract_text_from_pdf
 from .services.claude_client import ClaudeError
 
 
@@ -82,10 +82,13 @@ def cv_generate(request):
     except ClaudeError as e:
         return Response({'error': str(e)}, status=400)
 
+    mode = data.get('mode', 'adapt')
+    agent_fn = cv_agent_analyze if mode == 'analyze' else cv_agent_generate
+
     def event_stream():
         output_chunks = []
         try:
-            for chunk in cv_agent_generate(data['job_offer'], cv_text, cover_letter_text):
+            for chunk in agent_fn(data['job_offer'], cv_text, cover_letter_text):
                 output_chunks.append(chunk)
                 yield f"data: {json.dumps({'text': chunk})}\n\n"
 
@@ -93,7 +96,7 @@ def cv_generate(request):
             GenerationHistory.objects.create(
                 session=session,
                 agent="cv",
-                input_data={"job_offer": data['job_offer']},
+                input_data={"job_offer": data['job_offer'], "mode": mode},
                 output=full_output,
             )
             yield "data: [DONE]\n\n"
