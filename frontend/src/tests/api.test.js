@@ -11,8 +11,8 @@ const localStorageMock = (() => {
 })()
 Object.defineProperty(global, 'localStorage', { value: localStorageMock })
 
-// Mock crypto.randomUUID
-global.crypto = { randomUUID: () => '550e8400-e29b-41d4-a716-446655440000' }
+// Mock crypto.randomUUID (global.crypto is read-only in Node 22)
+vi.stubGlobal('crypto', { randomUUID: () => '550e8400-e29b-41d4-a716-446655440000' })
 
 describe('getSessionId', () => {
   beforeEach(() => localStorageMock.clear())
