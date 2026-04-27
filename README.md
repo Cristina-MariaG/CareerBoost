@@ -1,5 +1,7 @@
 # CareerBoost IA
 
+[![CI](https://github.com/Cristina-MariaG/CarrerBoost/actions/workflows/ci.yml/badge.svg)](https://github.com/Cristina-MariaG/CarrerBoost/actions/workflows/ci.yml)
+
 > Deux agents IA propulsés par Claude (Anthropic) pour booster ta recherche d'emploi.
 
 ---
