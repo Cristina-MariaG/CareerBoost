@@ -14,6 +14,10 @@ def _mock_stream(tokens):
 
 class ClaudeClientTest(TestCase):
 
+    def setUp(self):
+        import agents.services.claude_client as cc
+        cc._client = None
+
     @patch("agents.services.claude_client.anthropic.Anthropic")
     def test_stream_yields_text(self, mock_anthropic):
         mock_anthropic.return_value.messages.stream.return_value = _mock_stream(["Bonjour", " le", " monde"])
